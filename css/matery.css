@@ -241,7 +241,8 @@ mark {
 }
 
 .bg-color {
-    background-image: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%);
+    background-image: linear-gradient(to right, #ce8bc3 0%, #d48ec3 100%);
+    opacity: 0.8  /* 透明效果 */
 }
 
 .text-color {
@@ -257,7 +258,7 @@ mark {
     position: fixed;
     bottom: 0;
     z-index: 300;
-    background: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%);
+    background: linear-gradient(to right, #ca89bc 0%, #dfa1d1 100%);
     opacity: 0.8;
 }
 
@@ -1071,12 +1072,12 @@ article .article-tags .chip {
 
 #artDetail .post-cate {
     float: right;
-    color: #42b983;
+    color: #baecd6;
 }
 
 #artDetail .post-cate a {
     padding-right: 5px;
-    color: #42b983;
+    color: #98dbbd;
     font-weight: 500;
 }
 
@@ -1095,7 +1096,7 @@ article .article-tags .chip {
 
 #artDetail .post-info .post-category:hover {
     font-weight: bold;
-    color: #42b983;
+    color: #c8e7d9;
     text-decoration: underline;
 }
 
@@ -1158,7 +1159,7 @@ article .article-tags .chip {
 
 #artDetail .reprint a {
     font-size: 1.05rem;
-    color: #42b983;
+    color: #b5e4cf;
     font-weight: 500;
 }
 
@@ -1174,7 +1175,7 @@ article .article-tags .chip {
 
 #articleContent a {
     padding: 0 2px;
-    color: #42b983;
+    color: #abe0c9;
     font-weight: 500;
     text-decoration: underline;
     word-wrap: break-word;
@@ -1806,8 +1807,8 @@ thead {
 
 .other-skills .chip:hover {
     color: #fff;
-    background: linear-gradient(to right, #4cbf30 0%, #0f9d58 100%);
-    border: 1px solid #4cbf30;
+    background: linear-gradient(to right, #d3dfd0 0%, #dcf0e6 100%);
+    border: 1px solid #d2e9cc;
     box-shadow: 0 5px 5px rgba(0, 0, 0, .25)
 }
 
@@ -1873,7 +1874,7 @@ footer .copy-right {
 
 .search-result-list .search-result-title {
     font-size: 1.4rem;
-    color: #42b983;
+    color: #b5ebd3;
 }
 
 .search-result-list li {
