@@ -405,18 +405,98 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><strong>关卡1：</strong><br />1.拿到一台windows机器，权限为普通用户admin1<br />2.要求读到Users\administrator\desktop\flag.txt内容<br />那可以开始思考了(❍ᴥ❍ʋ)<br />这个东西是要有管理员的权限才能读取到文件，所以肯定是要提权辣。<br />所以我们尝试用windows漏洞提权。</p>
-<p>首先先systeminfo看一下信息<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866247-65cf7ba1-21df-4bac-b499-8211e096e06b.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=ued1b2d08&margin=%5Bobject%20Object%5D&originHeight=846&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u8cb3b363-745a-46d1-ad57-5b4636bc8f9&title="><br />Microsoft Windows [版本 10.0.17763.2366]</p>
-<p>可以看到他打了一些比较新的补丁，于是开始尝试了2021年一些的提权漏洞。<br />这里要主观去判断一下໒(＾ᴥ＾)७<br />对于Windows来说，虽然他没有打40449的补丁。<br />但是他打了比较新的漏洞补丁，所以有可能导致这个漏洞被修复了。<br />因为有些windows漏洞补丁是累加的。<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866231-bbe85579-f4f6-48ec-bf54-0d6de32da7cc.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u0b1a3c00&margin=%5Bobject%20Object%5D&originHeight=80&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u2ea1efbb-0995-4730-9a40-84a47c2f064&title="><br />尝试了一些windows提权漏洞之后发现!!!<br />这些漏洞要么打不成，要么要弹cmd窗口。<br />弹窗在cs上面不适用哇。<br />这时候最最可爱的楠宝说可以把提权弹窗的代码修改为直接cs上线的shellcode。<br />过程如下：<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866176-dcf2718d-7aac-47a4-bfc1-d20deb624e37.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=uca0900fd&margin=%5Bobject%20Object%5D&originHeight=626&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u3923c42a-d9cf-442d-ba46-5e975454aa6&title="><br />把cs上生成c的payload替换到exp里面<br />然后生成一个exe直接运行<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866264-708bfe29-c9a0-41c9-b622-448e8035c016.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u80200bf9&margin=%5Bobject%20Object%5D&originHeight=300&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u65ea4c62-8be6-4857-b503-7d47aec80cf&title="><br />但是也失败辣໒( ̿･ ᴥ ̿･ )ʋ</p>
-<p>于是换了个思路看一下开了哪些服务<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866612-216719ed-0ec2-48b0-877e-2564a7d455b3.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u0572ec30&margin=%5Bobject%20Object%5D&originHeight=794&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u159fc8c8-dc4e-4025-ace4-6f3fb5a6b6b&title="><br />发现打印机ʕ•̀ω•́ʔ✧<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866645-1dfae0fd-9233-4ea0-a249-817171044486.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u8dc41462&margin=%5Bobject%20Object%5D&originHeight=154&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ud7fc76f1-0237-4cdb-b478-42ac2020c34&title="><br />传压缩包上去后 破windows解压有问题<br />于是就测试只上传两个文件能不能利用成功呢<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866802-49c93f3a-d10c-4c36-a93c-ee6a5c53212a.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u104fb610&margin=%5Bobject%20Object%5D&originHeight=538&originWidth=874&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ua9e57c4b-b795-4562-9a0c-74220d2379b&title="><br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866694-734b6973-8192-4acb-9fbd-677125c69f0c.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u7ae0f492&margin=%5Bobject%20Object%5D&originHeight=762&originWidth=1080&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u773f3b2f-6ef6-493b-8a94-2e12e25b1ee&title="><br />测试OK 开始整活<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695866909-7ea87998-b0b1-4faa-aa7a-0e6a79e6701c.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u66e47a9b&margin=%5Bobject%20Object%5D&originHeight=314&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ucdcc3d81-2cf5-47d1-9138-0c713990ed4&title="><br />但是这里添加用户行为没成功（他机器上有火绒<br />所以猜测是被火绒拦截了<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867077-61047f9a-faca-474d-9f69-ed51387abb1e.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=ua718b3b5&margin=%5Bobject%20Object%5D&originHeight=218&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u116b5bf1-d5b9-4b4e-ab0a-14f9181522c&title="><br />呜呜呜这个权必须提<br />不然楠宝又不吃晚饭了 不能让她自己偷偷瘦下来චᆽච</p>
-<p>在最后快要放弃的时候!!!<br />突然发现还有CVE-2021-36934这个洞<br />这个漏洞由于对多个系统文件（包括安全帐户管理器 (SAM) 数据库）的访问控制列表 (ACL) 过于宽松，攻击者可读取SAM，SYSTEM，SECURITY等文件内容，进而获取用户NTLM Hash值，从而通过解密Hash值或Hash传递等方法造成特权提升漏洞。<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867239-30aed93a-4120-4ac2-a7a9-4e5c8b6de5ac.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=ua6893250&margin=%5Bobject%20Object%5D&originHeight=526&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u920bc261-34cb-46b7-8266-82bb4bb3b7d&title="><br />这个漏洞利用比较苛刻 需要要求机器创建过系统还原点<br />看了看他也没打KB5005030这个补丁 那就浅试一下叭<br />目标机器上运行HiveNightmare.exe<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867319-558747fb-1535-4661-9d4b-605c600b1f19.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u81a471d6&margin=%5Bobject%20Object%5D&originHeight=122&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ued83afc5-5edf-4662-bebb-a0b4437c255&title="><br />运行成功后会生成3个文件，读取到的SAM、SECURITY、SYSTEM<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867320-2ac42862-5a68-4bdb-b050-838d308cec3c.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=uba32c104&margin=%5Bobject%20Object%5D&originHeight=206&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=udde9f20b-be96-4d3e-bb01-ff76eb2254b&title="><br />自己电脑上下载impacket<br />用其中的 secretsdump.py 获取目标用户的 hash</p>
+                <p><strong>关卡1：</strong></p>
+<p>1.拿到一台windows机器，权限为普通用户admin1</p>
+<p>2.要求读到Users\administrator\desktop\flag.txt内容</p>
+<p>那可以开始思考了(❍ᴥ❍ʋ)</p>
+<p>这个东西是要有管理员的权限才能读取到文件，所以肯定是要提权辣。</p>
+<p>所以我们尝试用windows漏洞提权。</p>
+<p>首先先systeminfo看一下信息</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051955810.png" alt="img"></p>
+<p>Microsoft Windows [版本 10.0.17763.2366]</p>
+<p>可以看到他打了一些比较新的补丁，于是开始尝试了2021年一些的提权漏洞。</p>
+<p>这里要主观去判断一下໒(＾ᴥ＾)७</p>
+<p>对于Windows来说，虽然他没有打40449的补丁。</p>
+<p>但是他打了比较新的漏洞补丁，所以有可能导致这个漏洞被修复了。</p>
+<p>因为有些windows漏洞补丁是累加的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051955535.png" alt="img"></p>
+<p>尝试了一些windows提权漏洞之后发现!!!</p>
+<p>这些漏洞要么打不成，要么要弹cmd窗口。</p>
+<p>弹窗在cs上面不适用哇。</p>
+<p>这时候最最可爱的楠宝说可以把提权弹窗的代码修改为直接cs上线的shellcode。</p>
+<p>过程如下：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051955622.png" alt="img"></p>
+<p>把cs上生成c的payload替换到exp里面</p>
+<p>然后生成一个exe直接运行</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051955763.png" alt="img"></p>
+<p>但是也失败辣໒( ̿･ ᴥ ̿･ )ʋ</p>
+<p>于是换了个思路看一下开了哪些服务</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956425.png" alt="img"></p>
+<p>发现打印机ʕ•̀ω•́ʔ✧</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956380.png" alt="img"></p>
+<p>传压缩包上去后 破windows解压有问题</p>
+<p>于是就测试只上传两个文件能不能利用成功呢</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956931.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956473.png" alt="img"></p>
+<p>测试OK 开始整活</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956012.png" alt="img"></p>
+<p>但是这里添加用户行为没成功（他机器上有火绒</p>
+<p>所以猜测是被火绒拦截了</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956081.png" alt="img"></p>
+<p>呜呜呜这个权必须提</p>
+<p>不然楠宝又不吃晚饭了 不能让她自己偷偷瘦下来චᆽච</p>
+<p>在最后快要放弃的时候!!!</p>
+<p>突然发现还有CVE-2021-36934这个洞</p>
+<p>这个漏洞由于对多个系统文件（包括安全帐户管理器 (SAM) 数据库）的访问控制列表 (ACL) 过于宽松，攻击者可读取SAM，SYSTEM，SECURITY等文件内容，进而获取用户NTLM Hash值，从而通过解密Hash值或Hash传递等方法造成特权提升漏洞。</p>
+<p><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867239-30aed93a-4120-4ac2-a7a9-4e5c8b6de5ac.png" alt="img"></p>
+<p>这个漏洞利用比较苛刻 需要要求机器创建过系统还原点</p>
+<p>看了看他也没打KB5005030这个补丁 那就浅试一下叭</p>
+<p>目标机器上运行HiveNightmare.exe</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956148.png" alt="img"></p>
+<p>运行成功后会生成3个文件，读取到的SAM、SECURITY、SYSTEM</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956586.png" alt="img"></p>
+<p>自己电脑上下载impacket</p>
+<p>用其中的 secretsdump.py 获取目标用户的 hash</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 secretsdump.py -sam SAM-2022-03-17 -system SYSTEM-2022-03-17 -security SECURITY-2022-03-17 LOCAL</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867451-9296176d-8a35-4d98-9862-31c01db17b52.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=ua5a46752&margin=%5Bobject%20Object%5D&originHeight=638&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u926db435-a4a9-4bd4-ad8c-c7488d3741e&title="><br />正常情况下获取到管理员用户的HASH之后，可以使用impacket-psexec工具。<br />然后通过传递Hash利用SMB服务获取目标系统SYSTEM权限。<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867594-08d270e1-934e-4597-95a0-3abe8efe2bde.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u96e91f49&margin=%5Bobject%20Object%5D&originHeight=78&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u427142fc-4aab-4825-8ca9-8cd6b7757d5&title="><br />但是这里我没有去搭建隧道<br />试试看拿到的ntml hash能不能解（不能解在考虑pth<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867868-13cd8868-5f19-4d7f-8fc8-1d7f3bb7c196.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u541ec7f7&margin=%5Bobject%20Object%5D&originHeight=80&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u221ebc17-c3ad-4013-86fd-85930789df3&title="><br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867820-5627bbb4-b3f9-4692-b5fc-c7c94e03d8db.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u23521969&margin=%5Bobject%20Object%5D&originHeight=278&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ueb1e9c77-6c73-4ba2-8ea6-9855b9714ef&title="><br />拿到密码后就开始要使用管理员权限去读取flag.txt了</p>
-<p>这里脑瓜子乱掉了 我没有代理 不能3389<br />那怎么去用这个管理员权限呢<br />尝试内网横向的方式<br />像wmiexec.vbs、smbexec、psexec等<br />开始想使用psexec 但是<br />1.这样得到的是cmd框 2.给机器再去整个psexec太麻烦<br />shell psexec \192.168.11.247 -u administrator -p 123 -s cmd<br />使用wmic 失败<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695867900-8279502d-ab61-412f-936e-6e28b31e05de.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=ucb5dbcd9&margin=%5Bobject%20Object%5D&originHeight=72&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u23b9fd6d-9378-41b6-b151-b7b781277a9&title="><br />想使用网上那个工具 但是没回显<br />我不知道为什么OvO<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695868216-8f35de49-775a-4068-b685-058d7550142c.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u57792456&margin=%5Bobject%20Object%5D&originHeight=60&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ub560e363-87b4-43b4-9691-e2528bc41dc&title="><br />于是就想能不能使用net use呢？<br />这里我脑子真的短路了 导致原地tp了好久<br /><img src="https://cdn.nlark.com/yuque/0/2022/gif/273800/1647695868198-205e6919-a99e-4db7-a459-d93413339787.gif#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u23b342ac&margin=%5Bobject%20Object%5D&originHeight=150&originWidth=150&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u13b73ec4-a9cf-41ff-9524-b302cfeaab5&title="><br />原因是没有用\ip 所以导致我的会话还是当前权限的会话<br />还有一个脑残问题<br />就是在net use和type命令连起来用的时候<br />我竟然忘了要用&amp;&amp;<br />直接把命令连起来用了 导致一直失败</p>
-<p>本地测试可行性：<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695868456-c01268bd-6d39-450f-8efe-640de7154c3a.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u45af4304&margin=%5Bobject%20Object%5D&originHeight=486&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=ue6aa364d-38b8-4374-860a-3075261a5b7&title="><br />成功。<br />欧耶！<br />机器上操作：<br /><img src="https://cdn.nlark.com/yuque/0/2022/png/273800/1647695868479-103450f1-f862-4e99-a321-1038f5a4a3c4.png#clientId=u3286d198-b53a-4&crop=0&crop=0&crop=1&crop=1&from=paste&id=u3e11fe95&margin=%5Bobject%20Object%5D&originHeight=132&originWidth=832&originalType=url&ratio=1&rotation=0&showTitle=false&status=done&style=none&taskId=u13a38225-718a-43b9-ba9b-a34e0b772da&title="></p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956949.png" alt="img"></p>
+<p>正常情况下获取到管理员用户的HASH之后，可以使用impacket-psexec工具。</p>
+<p>然后通过传递Hash利用SMB服务获取目标系统SYSTEM权限。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956769.png" alt="img"></p>
+<p>但是这里我没有去搭建隧道</p>
+<p>试试看拿到的ntml hash能不能解（不能解在考虑pth</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956364.png" alt="img"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956406.png" alt="img"></p>
+<p>拿到密码后就开始要使用管理员权限去读取flag.txt了</p>
+<p>这里脑瓜子乱掉了 我没有代理 不能3389</p>
+<p>那怎么去用这个管理员权限呢</p>
+<p>尝试内网横向的方式</p>
+<p>像wmiexec.vbs、smbexec、psexec等</p>
+<p>开始想使用psexec 但是</p>
+<p>1.这样得到的是cmd框 2.给机器再去整个psexec太麻烦</p>
+<p>shell psexec \192.168.11.247 -u administrator -p 123 -s cmd</p>
+<p>使用wmic 失败</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956943.png" alt="img"></p>
+<p>想使用网上那个工具 但是没回显</p>
+<p>我不知道为什么OvO</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956868.png" alt="img"></p>
+<p>于是就想能不能使用net use呢？</p>
+<p>这里我脑子真的短路了 导致原地tp了好久</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956092.gif" alt="img"></p>
+<p>原因是没有用\ip 所以导致我的会话还是当前权限的会话</p>
+<p>还有一个脑残问题</p>
+<p>就是在net use和type命令连起来用的时候</p>
+<p>我竟然忘了要用&amp;&amp;</p>
+<p>直接把命令连起来用了 导致一直失败</p>
+<p>本地测试可行性：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956605.png" alt="img"></p>
+<p>成功。</p>
+<p>欧耶！</p>
+<p>机器上操作：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205051956154.png" alt="img"></p>
 <p>下一篇可以更新看能不能用数据库权限做一些事情~</p>
 <p>请多多指教 peko!!!</p>
+<p>修改 删除</p>
 
                 
             </div>
