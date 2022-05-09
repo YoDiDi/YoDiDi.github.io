@@ -406,7 +406,7 @@
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p>大部分的中间件或者框架都有一些共性的部分，例如多线程、反射和类加载等。所以深入研究一两个中间件的话，面对其他的中间件，那么就会很容易理解它里面所用的技术以及原理。</p>
-<h2 id="tomcat目录结构"><a href="#tomcat目录结构" class="headerlink" title="tomcat目录结构"></a>tomcat目录结构</h2><p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205092129262.png" alt="img"></p>
+<h2 id="tomcat目录结构："><a href="#tomcat目录结构：" class="headerlink" title="tomcat目录结构："></a>tomcat目录结构：</h2><p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205092129262.png" alt="img"></p>
 <p><strong>bin</strong>：startup和shutdown脚本，sh—&gt;linux，bat—&gt;windows</p>
 <p><strong>lib</strong>：依赖jar包</p>
 <p><strong>logs</strong>：日志</p>
@@ -535,18 +535,28 @@
 <p>-&gt;&#x2F;WEB-INF&#x2F;lib&#x2F;*.jar（WebappClassLoader）  </p>
 <p>-&gt; System tomcat(与JVM中的System类加载器appClassLoader不同)加载的相关类集合 （%CATALINA_HOME%\bin\catalina.bat） </p>
 <p>-&gt; Common加载的相关类集合(%CATALINA_HOME%\conf\catalina.properties)</p>
-<h3 id="tomcat的部署方式："><a href="#tomcat的部署方式：" class="headerlink" title="tomcat的部署方式："></a>tomcat的部署方式：</h3><h4 id="只介绍war包部署："><a href="#只介绍war包部署：" class="headerlink" title="只介绍war包部署："></a>只介绍war包部署：</h4><p>.war可以全部是class文件。其中web.xml也是可以删除的。</p>
-<p>但是将其打包为.jar包放在Tomcat文件夹下是无法生效的，因为在Java中一般.jar包是一个依赖包而且源码中也有文件类型判断。</p>
-<p>用.war包结尾的就被Tomcat视为一个项目。</p>
-<p>在Tomcat的代码中有一个判断，只有当程序为.war结尾时才会去走以下的逻辑。</p>
+<h3 id="tomcat的war包部署："><a href="#tomcat的war包部署：" class="headerlink" title="tomcat的war包部署："></a>tomcat的war包部署：</h3><p>.war里面包括写的代码编译成的class文件等等。</p>
+<p>在Tomcat的代码中有一个判断，只有当程序为.war结尾时才会去走以下的逻辑。用.war包结尾的就被Tomcat视为一个项目。（注意：但是将其打包为.jar包放在Tomcat文件夹下是无法生效的，因为在Java中一般.jar包是一个依赖包而且源码中也有文件类型判断。）</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205092148211.png" alt="image-20220509214812170"></p>
+<p>这里有两种模式</p>
+<p>war模式：将WEB工程以war包的形式上传到Tomcat服务器 ，存放于服务器的webapps目录下。<br> war exploded模式：将WEB工程以当前文件夹的位置关系上传到服务器，包括文件夹、jsp页面 、classes等等移到Tomcat 部署文件夹里面，进行加载部署。（因此这种方式支持热部署）。</p>
 <p>tomcat部署war包getshell，不过有时候war包还不一定有效，如果没开热部署，就不会自动解压了。</p>
 <p>这里提到两个概念：</p>
 <p>热部署（由host负责）：Tomcat在启动的时候会将其目录下webapp中war包解压后然后封装为一个Context供外部访问。那么热部署就是在程序运行时，如果我们修改了War包中的东西。那么Tomcat就会删除之前的War包解压的文件夹，重新解压新的War包。</p>
 <p>热加载（由Context负责）：Tomcat默认情况下是不开启热加载的。服务器会监听 class 文件改变，包括web-inf&#x2F;class,wen-inf&#x2F;lib,web-inf&#x2F;web.xml等文件，若发生更改，则局部进行加载，不清空session ，不释放内存。</p>
+<p>tomcat在host中做WAR解压和部署相关的工作。</p>
+<p>HostConfig实现了LifecycleListener接口，它是一个监听器，作用是部署应用。</p>
+<p>看一下它其中deployApps的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">deployApps</span><span class="params">()</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="type">File</span> <span class="variable">appBase</span> <span class="operator">=</span> host.getAppBaseFile();</span><br><span class="line">    <span class="type">File</span> <span class="variable">configBase</span> <span class="operator">=</span> host.getConfigBaseFile();</span><br><span class="line">    String[] filteredAppPaths = filterAppPaths(appBase.list());</span><br><span class="line">    <span class="comment">// Deploy XML descriptors from configBase</span></span><br><span class="line">    deployDescriptors(configBase, configBase.list());</span><br><span class="line">    <span class="comment">// Deploy WARs</span></span><br><span class="line">    deployWARs(appBase, filteredAppPaths);</span><br><span class="line">    <span class="comment">// Deploy expanded folders</span></span><br><span class="line">    deployDirectories(appBase, filteredAppPaths);</span><br><span class="line"></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>再进一步看一下deployWARs的代码</p>
+<p><img src="https://cdn.jsdelivr.net/gh/YoDiDi/blog_img@main/202205092225475.png" alt="image-20220509222523416"></p>
+<h3 id="tomca创建servlet类实例："><a href="#tomca创建servlet类实例：" class="headerlink" title="tomca创建servlet类实例："></a>tomca创建servlet类实例：</h3><p>当容器启动时，会读取在webapps目录下所有的web应用中的web.xml文件，然后对xml文件进行解析，并读取servlet注册信息。然后，将每个应用中注册的servlet类都进行加载，并通过反射的方式实例化。</p>
 <p>参考文章：</p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/efd19125255c">https://www.jianshu.com/p/efd19125255c</a></p>
 <p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903881067986957">https://juejin.cn/post/6844903881067986957</a></p>
 <p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1913028?from=article.detail.1890176">https://cloud.tencent.com/developer/article/1913028?from=article.detail.1890176</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_45406092/article/details/111413229">https://blog.csdn.net/m0_45406092/article/details/111413229</a></p>
 
                 
             </div>
